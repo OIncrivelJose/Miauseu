@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Visualizar desenho</title>
+
+
+    <style>
+
+        /* =====================================
+           CONFIGURAÇÕES GERAIS
+        ===================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+        }
+
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            background: #fff1b8;
+
+            color: #4b3027;
+
+            overflow: auto;
+        }
+
+
+        /* =====================================
+           CABEÇALHO
+        ===================================== */
+
+        .cabecalho {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 85px;
+
+            background: #4b3027;
+
+            border-top: 3px solid #3b2923;
+
+            z-index: 100;
+        }
+
+
+        /* =====================================
+           LOGO
+        ===================================== */
+
+        .logo {
+
+            position: absolute;
+
+            left: 20px;
+            top: 10px;
+
+            width: 65px;
+            height: 65px;
+
+            border-radius: 50%;
+
+            overflow: hidden;
+        }
+
+
+        .logo img {
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: contain;
+        }
+
+
+        /* =====================================
+           ABAS
+        ===================================== */
+
+        .abas {
+
+            position: absolute;
+
+            left: 157px;
+            bottom: 0;
+
+            display: flex;
+
+            gap: 26px;
+
+            align-items: flex-end;
+        }
+
+
+        .aba {
+
+            width: 126px;
+            height: 43px;
+
+            background: white;
+
+            border: none;
+
+            border-radius: 20px 20px 0 0;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            color: #4b3027;
+        }
+
+
+        .aba:hover {
+
+            background: #f3f3f3;
+
+            transform: translateY(5px);
+        }
+
+
+        /* =====================================
+           ÁREA DE VISUALIZAÇÃO
+        ===================================== */
+
+        .visualizacao {
+
+            min-height: 100vh;
+
+            padding-top: 115px;
+
+            padding-bottom: 50px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: flex-start;
+        }
+
+
+        /* =====================================
+           BOTÃO VOLTAR
+        ===================================== */
+
+        .voltar {
+
+            align-self: flex-start;
+
+            margin-left: 30px;
+
+            margin-bottom: 25px;
+
+            padding: 12px 25px;
+
+            background: white;
+
+            border: none;
+
+            border-radius: 15px;
+
+            color: #4b3027;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .voltar:hover {
+
+            transform: translateY(-2px);
+
+            background: #f3f3f3;
+        }
+
+
+        /* =====================================
+           IMAGEM ORIGINAL
+        ===================================== */
+
+        .imagem-original {
+
+            width: auto;
+
+            height: auto;
+
+            max-width: none;
+
+            display: block;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 8px 25px rgba(
+                    75,
+                    48,
+                    39,
+                    0.20
+                );
+        }
+
+
+        /* =====================================
+           INFORMAÇÕES
+        ===================================== */
+
+        .informacoes {
+
+            margin-top: 20px;
+
+            text-align: center;
+
+            font-weight: bold;
+
+            font-size: 18px;
+
+            background: white;
+
+            padding: 12px 25px;
+
+            border-radius: 15px;
+        }
+
+
+        /* =====================================
+           ABAS DO DESENHO
+        ===================================== */
+
+        .abas-desenho {
+
+            display: flex;
+
+            gap: 10px;
+
+            margin-top: 20px;
+
+        }
+
+        .aba-desenho {
+
+            padding: 12px 24px;
+
+            background: white;
+
+            border: none;
+
+            border-radius: 15px 15px 0 0;
+
+            color: #4b3027;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+        .aba-desenho.ativa {
+
+            background: #c5ddeb;
+
+        }
+
+        .aba-desenho:hover {
+
+            transform: translateY(-2px);
+
+        }
+
+
+        /* =====================================
+           PAINEL DE COMENTÁRIOS
+        ===================================== */
+
+        .comentarios {
+
+            display: none;
+
+            width: min(700px, 92vw);
+
+            background: #c5ddeb;
+
+            border-radius: 0 20px 20px 20px;
+
+            padding: 25px;
+
+            margin-top: 0;
+
+        }
+
+        .comentarios h2 {
+
+            margin-bottom: 15px;
+
+            font-size: 28px;
+
+            color: #4b3027;
+
+        }
+
+        .comentario-form {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+        }
+
+        .comentario-form textarea {
+
+            width: 100%;
+
+            min-height: 110px;
+
+            resize: vertical;
+
+            border: none;
+
+            outline: none;
+
+            border-radius: 15px;
+
+            padding: 15px;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 16px;
+
+            color: #4b3027;
+
+            background: white;
+
+        }
+
+        .botao-comentar {
+
+            align-self: flex-end;
+
+            padding: 11px 22px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: #4b3027;
+
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+        .botao-comentar:hover {
+
+            opacity: 0.85;
+
+        }
+
+        .lista-comentarios {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+
+            margin-top: 20px;
+
+        }
+
+        .comentario {
+
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 15px;
+
+            color: #4b3027;
+
+            overflow-wrap: anywhere;
+
+        }
+
+        .comentario-texto {
+
+            font-size: 16px;
+
+            line-height: 1.4;
+
+            white-space: pre-wrap;
+
+        }
+
+        .comentario-data {
+
+            display: block;
+
+            margin-top: 8px;
+
+            font-size: 12px;
+
+            opacity: 0.65;
+
+        }
+
+        .sem-comentarios {
+
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 15px;
+
+            text-align: center;
+
+        }
+
+
+        /* =====================================
+           RESPONSIVIDADE
+        ===================================== */
+
+        @media (max-width: 900px) {
+
+            .abas {
+
+                left: 110px;
+
+                gap: 15px;
+            }
+
+
+            .aba {
+
+                width: 110px;
+            }
+
+
+            .imagem-original {
+
+                max-width: 95vw;
+
+                height: auto;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .abas {
+
+                left: 90px;
+
+                gap: 7px;
+            }
+
+
+            .aba {
+
+                width: 85px;
+
+                font-size: 14px;
+            }
+
+
+            .logo {
+
+                left: 10px;
+
+                width: 60px;
+                height: 60px;
+            }
+
+
+            .voltar {
+
+                margin-left: 15px;
+            }
+
+
+            .imagem-original {
+
+                max-width: 95vw;
+
+                height: auto;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================
+         CABEÇALHO
+    ===================================== -->
+
+    <header class="cabecalho">
+
+
+        <!-- LOGO -->
+
+        <div class="logo">
+
+            <img
+                src="kit.png"
+                alt="Logo"
+            >
+
+        </div>
+
+
+        <!-- ABAS -->
+
+        <nav class="abas">
+
+            <button
+                class="aba"
+                onclick="window.location.href='index.html'"
+            >
+                Home
+            </button>
+
+
+            <button
+                class="aba"
+                onclick="window.location.href='sobre.html'"
+            >
+                Sobre
+            </button>
+
+
+            <button
+                class="aba"
+                onclick="window.location.href='turmas.html'"
+            >
+                Desenhos
+            </button>
+
+
+            <button
+                class="aba"
+                onclick="window.location.href='avalie.html'"
+            >
+                Avalie
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =====================================
+         VISUALIZAÇÃO
+    ===================================== -->
+
+    <main class="visualizacao">
+
+
+        <!-- BOTÃO VOLTAR -->
+
+        <button
+            class="voltar"
+            onclick="window.location.href='turmas.html'"
+        >
+            ← Voltar
+        </button>
+
+
+        <!-- IMAGEM ORIGINAL -->
+
+        <img
+            id="imagemOriginal"
+            class="imagem-original"
+            src=""
+            alt="Desenho"
+        >
+
+
+        <!-- INFORMAÇÕES -->
+
+        <div
+            id="informacoes"
+            class="informacoes"
+        ></div>
+
+
+        <!-- =====================================
+             ABAS DO DESENHO
+        ====================================== -->
+
+        <div class="abas-desenho">
+
+            <button
+                type="button"
+                id="abaInformacoes"
+                class="aba-desenho ativa"
+                onclick="mostrarAba('informacoes')"
+            >
+                Informações
+            </button>
+
+            <button
+                type="button"
+                id="abaComentarios"
+                class="aba-desenho"
+                onclick="mostrarAba('comentarios')"
+            >
+                Comentários
+            </button>
+
+        </div>
+
+
+        <!-- =====================================
+             COMENTÁRIOS ESPECÍFICOS DO DESENHO
+        ====================================== -->
+
+        <section
+            id="comentarios"
+            class="comentarios"
+        >
+
+            <h2>
+                Comentários deste desenho
+            </h2>
+
+            <form
+                class="comentario-form"
+                onsubmit="adicionarComentario(event)"
+            >
+
+                <textarea
+                    id="campoComentario"
+                    maxlength="1000"
+                    placeholder="Escreva um comentário..."
+                    aria-label="Escreva um comentário"
+                ></textarea>
+
+                <button
+                    type="submit"
+                    class="botao-comentar"
+                >
+                    Comentar
+                </button>
+
+            </form>
+
+            <div
+                id="listaComentarios"
+                class="lista-comentarios"
+            ></div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================
+         JAVASCRIPT
+    ===================================== -->
+
+    <script>
+
+
+        /* =====================================
+           PEGAR ID DA URL
+        ===================================== */
+
+        const parametros =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const numero =
+            Number(
+                parametros.get("id")
+            );
+
+
+        const abaInicial = parametros.get("aba");
+
+        /* =====================================
+           ELEMENTOS
+        ===================================== */
+
+        const imagem =
+            document.getElementById(
+                "imagemOriginal"
+            );
+
+
+        const informacoes =
+            document.getElementById(
+                "informacoes"
+            );
+
+
+        /* =====================================
+           DESENHOS SALVOS
+        ===================================== */
+
+        let desenhos = [];
+
+
+        try {
+
+            desenhos =
+                JSON.parse(
+                    localStorage.getItem(
+                        "miauseumDesenhos"
+                    )
+                ) || [];
+
+        } catch (erro) {
+
+            desenhos = [];
+
+        }
+
+
+        /* =====================================
+           DESENHO SELECIONADO
+        ===================================== */
+
+        const desenho =
+            desenhos[numero - 1];
+
+
+        if (desenho) {
+
+            /*
+                Se o desenho veio do sistema
+                de envio, usa a imagem original
+                armazenada no localStorage.
+            */
+
+            imagem.src =
+                desenho.imagem;
+
+
+            imagem.alt =
+                desenho.nome ||
+                "Desenho";
+
+
+            informacoes.innerHTML =
+                `
+                    ${desenho.nome || "Desenho"}
+                    <br>
+                    ${desenho.autor || ""}
+                `;
+
+        } else {
+
+
+            /* =================================
+               DESENHOS PADRÃO
+            ================================= */
+
+            imagem.src =
+                "desenho" +
+                numero +
+                ".png";
+
+
+            imagem.alt =
+                "Desenho " +
+                numero;
+
+
+            informacoes.textContent =
+                "Desenho " +
+                numero;
+
+        }
+
+
+        /* =====================================
+           SISTEMA DE COMENTÁRIOS
+           Cada desenho possui sua própria lista.
+        ===================================== */
+
+        const CHAVE_COMENTARIOS =
+            "miauseumComentarios";
+
+
+        function obterTodosComentarios() {
+
+            try {
+
+                return JSON.parse(
+                    localStorage.getItem(
+                        CHAVE_COMENTARIOS
+                    )
+                ) || {};
+
+            } catch (erro) {
+
+                return {};
+
+            }
+
+        }
+
+
+        function salvarTodosComentarios(comentarios) {
+
+            localStorage.setItem(
+                CHAVE_COMENTARIOS,
+                JSON.stringify(comentarios)
+            );
+
+        }
+
+
+        function mostrarAba(aba) {
+
+            const informacoesPainel =
+                document.getElementById(
+                    "informacoes"
+                );
+
+            const comentariosPainel =
+                document.getElementById(
+                    "comentarios"
+                );
+
+            const abaInformacoes =
+                document.getElementById(
+                    "abaInformacoes"
+                );
+
+            const abaComentarios =
+                document.getElementById(
+                    "abaComentarios"
+                );
+
+            if (aba === "comentarios") {
+
+                informacoesPainel.style.display = "none";
+                comentariosPainel.style.display = "block";
+
+                abaInformacoes.classList.remove("ativa");
+                abaComentarios.classList.add("ativa");
+
+                carregarComentarios();
+
+            } else {
+
+                informacoesPainel.style.display = "block";
+                comentariosPainel.style.display = "none";
+
+                abaInformacoes.classList.add("ativa");
+                abaComentarios.classList.remove("ativa");
+
+            }
+
+        }
+
+
+        function carregarComentarios() {
+
+            const lista =
+                document.getElementById(
+                    "listaComentarios"
+                );
+
+            if (!lista || !numero) {
+                return;
+            }
+
+            const todos =
+                obterTodosComentarios();
+
+            const comentarios =
+                Array.isArray(todos[numero])
+                    ? todos[numero]
+                    : [];
+
+            lista.innerHTML = "";
+
+            if (comentarios.length === 0) {
+
+                const vazio =
+                    document.createElement("div");
+
+                vazio.className =
+                    "sem-comentarios";
+
+                vazio.textContent =
+                    "Ainda não há comentários para este desenho.";
+
+                lista.appendChild(vazio);
+
+                return;
+
+            }
+
+            comentarios.forEach(function (comentario) {
+
+                const item =
+                    document.createElement("div");
+
+                item.className = "comentario";
+
+                const texto =
+                    document.createElement("div");
+
+                texto.className =
+                    "comentario-texto";
+
+                texto.textContent =
+                    comentario.texto || "";
+
+                const data =
+                    document.createElement("span");
+
+                data.className =
+                    "comentario-data";
+
+                data.textContent =
+                    comentario.data || "";
+
+                item.appendChild(texto);
+                item.appendChild(data);
+
+                lista.appendChild(item);
+
+            });
+
+        }
+
+
+        function adicionarComentario(evento) {
+
+            evento.preventDefault();
+
+            const campo =
+                document.getElementById(
+                    "campoComentario"
+                );
+
+            const texto =
+                campo.value.trim();
+
+            if (!texto) {
+
+                campo.focus();
+                return;
+
+            }
+
+            const todos =
+                obterTodosComentarios();
+
+            if (!Array.isArray(todos[numero])) {
+                todos[numero] = [];
+            }
+
+            todos[numero].push({
+                texto: texto,
+                data: new Date().toLocaleString("pt-BR")
+            });
+
+            salvarTodosComentarios(todos);
+
+            campo.value = "";
+
+            carregarComentarios();
+
+        }
+
+
+        /* =====================================
+           ERRO AO CARREGAR IMAGEM
+        ===================================== */
+
+        imagem.onerror =
+            function () {
+
+                informacoes.textContent =
+                    "Não foi possível carregar esta imagem.";
+
+            };
+
+
+        if (abaInicial === "comentarios") {
+            mostrarAba("comentarios");
+        }
+
+    </script>
+
+
+</body>
+
+</html>
